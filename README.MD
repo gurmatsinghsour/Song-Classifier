@@ -40,17 +40,19 @@ We preprocessed lyrics datasets, vectorized the text, and built a custom classif
 
 ```
 ├── run.bat                       # One-click setup and launcher
-├── app.py                        # Flask API backend
-├── save_model.py                 # Model training script
+├── app.py                        # Flask API backend             
 ├── requirements.txt              # Python dependencies
 ├── Model/
 │   └── logistic_regression_pipeline.joblib  # Trained model
+│   └── label_to_genre.joblib
+├── Training/
+│   └── save_model.ipynb
 ├── templates/
 │   └── index.html                # Frontend interface
-├── notebooks/
+├── notebooks/                    # Each member’s contribution
 │   ├── gurmat_singh_work.ipynb
 │   ├── robert_seibel_work.ipynb
-│   └── minh_nhat_work.ipynb     # Each member’s contribution
+│   └── minh_nhat_work.ipynb     
 ├── Presentation/
 │   └── lyric_classifier_slides.pptx  # Final presentation
 └── README.md
