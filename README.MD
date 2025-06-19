@@ -1,113 +1,111 @@
 # Lyric Genre & Content Classifier
 
-This project is a web application that classifies the genre of song lyrics using a trained Logistic Regression model. It also provides content analysis, including sentiment and the use of explicit language. The application consists of a Python Flask backend that serves the machine learning model via an API, and a simple HTML/CSS/JavaScript frontend for user interaction.
+Welcome to our **Lyric Genre & Content Classifier** project!  
+This tool uses Natural Language Processing (NLP) and machine learning to predict a song’s **genre** and **emotional tone** based on its lyrics.
 
-## Project Structure
+---
+
+## How to Run the Project
+
+Simply **double-click `run.bat`** or run it via terminal:
+
+```
+run.bat
+```
+
+This script handles:
+1. Checking if Python is installed.
+2. Creating a virtual environment (if not already present).
+3. Installing required dependencies (if not already installed).
+4. Downloading NLTK’s VADER sentiment lexicon.
+5. Training the model (if not already trained).
+6. Launching the Flask API in a new window.
+7. Opening the web UI located at `templates/index.html`.
+
+> If you've already set up the project, running the batch file again will simply **start the API and frontend** — no redundant setup.
+
+---
+
+## Project Overview
+
+The project is an NLP-powered classifier that analyzes a song’s lyrics to:
+- **Predict the genre** using machine learning (Logistic Regression pipeline).
+- **Analyze sentiment** using VADER sentiment analysis.
+
+We preprocessed lyrics datasets, vectorized the text, and built a custom classifier that runs via a web-based UI.
+
+---
+
+## Repository Structure
+
+```
+├── run.bat                       # One-click setup and launcher
+├── app.py                        # Flask API backend
+├── save_model.py                 # Model training script
+├── requirements.txt              # Python dependencies
+├── Model/
+│   └── logistic_regression_pipeline.joblib  # Trained model
+├── templates/
+│   └── index.html                # Frontend interface
+├── notebooks/
+│   ├── gurmat_singh_work.ipynb
+│   ├── robert_seibel_work.ipynb
+│   └── minh_nhat_work.ipynb     # Each member’s contribution
+├── Presentation/
+│   └── lyric_classifier_slides.pptx  # Final presentation
+└── README.md
+```
+
+---
+
+## Team Members (Sweathog Subset)
+
+- Gurmat Singh Sour
+- Robert Seibel
+- Minh Nhat Mai
+
+---
+
+## Demo & Usage
+
+1. Run `run.bat`.
+2. The Flask backend will start on `http://127.0.0.1:5000/predict`.
+3. Your default browser will open the frontend UI where you can:
+   - Enter song lyrics
+   - Submit the form
+   - View predicted genre and sentiment instantly
+
+---
+
+# Contributing to Lyric Genre & Content Classifier
+
+Thank you for your interest in contributing to this project!
+
+## How to Contribute
+
+1. **Fork the repository**  
+   Click the "Fork" button at the top right of this page to create your own copy of the repo.
+
+2. **Clone your fork**  
+   ```bash
+   git clone https://github.com/YOUR-USERNAME/Song-Classifier.git
+
+3. **Create a new branch for your changes**
+    ```bash
+    git checkout -b feature/your-feature-name
+
+4. **Make your changes**
+
+5. **Commit and push your code**
+    ```bash
+    git add .
+    git commit -m "Add your message here"
+    git push origin feature/your-feature-name
+
+6. Create a Pull Request
+    ```bash
+    Go to the original repo and click “Compare & pull request”.
 
 
-.
-├── app.py                      # The Flask API server to handle predictions.
-├── save_model.py               # Script to train and save the ML model pipeline.
-├── requirements.txt            # Python dependencies for the project.
-├── cleaned_rock_country_hiphop_rb.csv # The dataset used for training.
-├── logistic_regression_pipeline.joblib  # Generated model file.
-├── label_to_genre.joblib       # Generated label mapping file.
-└── index.html                  # The front-end user interface (or provided separately).
 
-
-## Setup Instructions
-
-Follow these steps to set up and run the project on your local machine.
-
-### 1. Prerequisites
-
-- Python 3.7+
-- `pip` (Python package installer)
-
-### 2. Environment Setup
-
-It is highly recommended to use a virtual environment to keep project dependencies isolated.
-
-```bash
-# Create a virtual environment
-python -m venv venv
-
-# Activate the virtual environment
-# On Windows:
-venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-
-3. Install Dependencies
-
-Install all the required Python libraries using the requirements.txt file.
-
-pip install -r requirements.txt
-
-4. Download NLTK Data
-
-The sentiment analysis feature requires the VADER lexicon from the NLTK library. Run the following command in a Python shell to download it:
-
-import nltk
-nltk.download('vader_lexicon')
-
-Running the Application
-
-The application requires a two-step process to run: first, train and save the model; second, start the API server.
-Step 1: Train and Save the Model
-
-Before starting the API, you need to generate the model artifact file (.joblib). Make sure your dataset cleaned_rock_country_hiphop_rb.csv is in the project's root directory.
-
-Run the save_model.py script:
-
-python save_model.py
-
-This will create two files: logistic_regression_pipeline.joblib and label_to_genre.joblib. You only need to do this once.
-Step 2: Start the Flask API Server
-
-With the model files created, you can now start the API server.
-
-python app.py
-
-The server will start, and you should see output indicating it is running, typically on http://127.0.0.1:5000/. The API is now ready to accept requests.
-Step 3: Use the Frontend
-
-Open the provided HTML file (the Lyric Classifier UI) in your web browser. You can now paste lyrics into the text area and click "Classify". The frontend will send a request to your local Flask API and display the results.
-API Endpoint
-
-The Flask application exposes the following endpoint:
-
-    URL: /predict
-
-    Method: POST
-
-    Description: Takes song lyrics and returns a classification report.
-
-    Request Body (JSON):
-
-    {
-      "lyrics": "Is this the real life? Is this just fantasy? ..."
-    }
-
-    Success Response (JSON):
-
-    {
-      "predictedGenre": "Rock",
-      "genreProbabilities": {
-        "Country": 0.15,
-        "Hip-Hop": 0.10,
-        "R&B": 0.20,
-        "Rock": 0.55
-      },
-      "sentimentLabel": "Negative",
-      "sentimentScore": -0.45,
-      "explicitnessLabel": "Not Explicit",
-      "explicitWordCount": 0
-    }
-
-    Error Response (JSON):
-
-    {
-      "error": "Error message here."
-    }
-
+Thank you for checking out our project!
