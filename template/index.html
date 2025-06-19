@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyric Genre & Content Classifier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-4xl bg-gray-800 rounded-2xl shadow-2xl p-6 md:p-10">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Lyric Genre & Content Classifier</h1>
+            <p class="text-gray-400 mt-2">Paste lyrics to analyze their genre, sentiment, and explicitness based on your NLP model.</p>
+        </header>
+
+        <main>
+            <div class="mb-6">
+                <label for="lyrics-input" class="block text-sm font-medium text-gray-300 mb-2">Enter Song Lyrics:</label>
+                <textarea id="lyrics-input" rows="10" class="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-gray-200" placeholder="e.g., Is this the real life? Is this just fantasy?..."></textarea>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                 <button id="classify-btn" class="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-12 rounded-lg transition-all shadow-lg flex items-center justify-center">
+                    <span id="btn-text">Classify</span>
+                    <svg id="loader" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <p id="audio-message" class="text-center text-sm text-yellow-400 mt-4 hidden">Audio-to-text is a feature coming soon! For now, please paste lyrics directly.</p>
+
+            <div id="results-section" class="mt-10 hidden fade-in">
+                <h2 class="text-2xl font-bold text-center mb-6">Analysis Report</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-700 p-6 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-4 text-purple-300">Genre Prediction</h3>
+                        <div class="text-center mb-4">
+                            <p class="text-gray-400 text-sm">Predicted Genre</p>
+                            <p id="predicted-genre" class="text-4xl font-bold capitalize"></p>
+                        </div>
+                        <div id="genre-probabilities"></div>
+                    </div>
+
+                    <div class="bg-gray-700 p-6 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-4 text-pink-300">Content Analysis</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-gray-400 text-sm">Sentiment</p>
+                                <div class="flex items-center">
+                                    <p id="sentiment-label" class="text-xl font-bold mr-2"></p>
+                                    <p id="sentiment-score" class="text-sm text-gray-400"></p>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-gray-400 text-sm">Explicitness</p>
+                                <div class="flex items-center">
+                                    <p id="explicitness-label" class="text-xl font-bold mr-2"></p>
+                                    <p id="explicit-word-count" class="text-sm text-gray-400"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<script>
+    // --- DOM Elements ---
+    const lyricsInput = document.getElementById('lyrics-input');
+    const classifyBtn = document.getElementById('classify-btn');
+    const btnText = document.getElementById('btn-text');
+    const loader = document.getElementById('loader');
+    const audioUpload = document.getElementById('audio-upload');
+    const audioMessage = document.getElementById('audio-message');
+    
+    const resultsSection = document.getElementById('results-section');
+    const predictedGenreEl = document.getElementById('predicted-genre');
+    const genreProbabilitiesEl = document.getElementById('genre-probabilities');
+    const sentimentLabelEl = document.getElementById('sentiment-label');
+    const sentimentScoreEl = document.getElementById('sentiment-score');
+    const explicitnessLabelEl = document.getElementById('explicitness-label');
+    const explicitWordCountEl = document.getElementById('explicit-word-count');
+
+    // --- API Endpoint ---
+    // This now points to the correct address for the Flask API server.
+    const API_ENDPOINT = 'http://127.0.0.1:5000/predict';
+
+    // --- Event Listeners ---
+    classifyBtn.addEventListener('click', async () => {
+        const lyrics = lyricsInput.value;
+        if (!lyrics.trim()) {
+            alert('Please enter some lyrics to analyze.');
+            return;
+        }
+        
+        toggleLoading(true);
+
+        try {
+            const analysis = await analyzeLyricsWithAPI(lyrics);
+            displayResults(analysis);
+        } catch (error) {
+            console.error('Error fetching from API:', error);
+            alert('Could not connect to the analysis API. Make sure the Flask server is running and accessible.');
+        } finally {
+            toggleLoading(false);
+        }
+    });
+    
+    audioUpload.addEventListener('change', () => {
+        audioMessage.classList.remove('hidden');
+        setTimeout(() => {
+             audioMessage.classList.add('hidden');
+        }, 5000);
+    });
+    
+    function toggleLoading(isLoading) {
+        if (isLoading) {
+            btnText.textContent = 'Analyzing...';
+            loader.classList.remove('hidden');
+            classifyBtn.disabled = true;
+        } else {
+            btnText.textContent = 'Classify';
+            loader.classList.add('hidden');
+            classifyBtn.disabled = false;
+        }
+    }
+
+    // --- Core Functions ---
+    async function analyzeLyricsWithAPI(lyrics) {
+        const response = await fetch(API_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ lyrics: lyrics })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
+        }
+        
+        return response.json();
+    }
+    
+    function displayResults(analysis) {
+        predictedGenreEl.textContent = analysis.predictedGenre;
+        
+        // Genre Probabilities
+        genreProbabilitiesEl.innerHTML = '';
+        const sortedGenres = Object.entries(analysis.genreProbabilities).sort(([,a],[,b]) => b-a);
+        
+        sortedGenres.forEach(([genre, prob]) => {
+            const percentage = (prob * 100).toFixed(1);
+            const barHtml = `
+                <div class="mb-2">
+                    <div class="flex justify-between mb-1">
+                        <span class="text-sm font-medium text-gray-300 capitalize">${genre}</span>
+                        <span class="text-sm font-medium text-gray-400">${percentage}%</span>
+                    </div>
+                    <div class="w-full bg-gray-600 rounded-full h-2.5">
+                        <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2.5 rounded-full" style="width: ${percentage}%"></div>
+                    </div>
+                </div>
+            `;
+            genreProbabilitiesEl.innerHTML += barHtml;
+        });
+
+        // Content Analysis
+        sentimentLabelEl.textContent = analysis.sentimentLabel;
+        sentimentScoreEl.textContent = `(Compound: ${analysis.sentimentScore.toFixed(3)})`;
+        
+        if(analysis.sentimentLabel === 'Positive') sentimentLabelEl.className = "text-xl font-bold text-green-400";
+        else if(analysis.sentimentLabel === 'Negative') sentimentLabelEl.className = "text-xl font-bold text-red-400";
+        else sentimentLabelEl.className = "text-xl font-bold text-gray-300";
+
+        explicitnessLabelEl.textContent = analysis.explicitnessLabel;
+        explicitWordCountEl.textContent = `(${analysis.explicitWordCount} explicit words found)`;
+        
+        if(analysis.explicitnessLabel === 'Explicit') explicitnessLabelEl.className = "text-xl font-bold text-yellow-400";
+        else explicitnessLabelEl.className = "text-xl font-bold text-blue-400";
+        
+        resultsSection.classList.remove('hidden');
+    }
+
+</script>
+</body>
+</html>
