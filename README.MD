@@ -22,7 +22,7 @@ This script handles:
 6. Launching the Flask API in a new window.
 7. Opening the web UI located at `templates/index.html`.
 
-> If you've already set up the project, running the batch file again will simply **start the API and frontend** — no redundant setup.
+> If you've already set up the project, running the batch file again will simply **start the API and frontend**, no redundant setup.
 
 ---
 
