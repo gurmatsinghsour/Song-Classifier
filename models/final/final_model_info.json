@@ -1,0 +1,62 @@
+{
+  "model_name": "Song Genre Classifier",
+  "version": "1.0",
+  "accuracy": 0.7336884154460719,
+  "accuracy_percent": "73.37%",
+  "target_achieved": true,
+  "model_type": "Hybrid: Pre-trained Embeddings + Enhanced TF-IDF + Ensemble",
+  "architecture": {
+    "sentence_transformer": "all-MiniLM-L6-v2",
+    "embedding_dimensions": 384,
+    "tfidf_max_features": 15000,
+    "tfidf_ngrams": "1-4",
+    "tfidf_reduced_dims": 300,
+    "total_feature_dims": 684,
+    "ensemble_models": [
+      "Hybrid_LogisticRegression",
+      "Hybrid_RandomForest",
+      "Hybrid_SVM"
+    ]
+  },
+  "performance": {
+    "individual_model_accuracies": {
+      "Hybrid_LogisticRegression": "73.10%",
+      "Hybrid_RandomForest": "69.37%",
+      "Hybrid_SVM": "73.24%"
+    },
+    "ensemble_accuracy": "73.37%",
+    "genres": [
+      "R&B",
+      "country",
+      "rap & hip hop",
+      "rock"
+    ],
+    "training_samples": 3004,
+    "test_samples": 751
+  },
+  "files_created": [
+    "final_ensemble_model.joblib",
+    "final_sentence_model.joblib",
+    "final_tfidf_vectorizer.joblib",
+    "final_svd_transformer.joblib",
+    "final_label_encoder.joblib",
+    "predict_genre.py",
+    "final_model_info.json"
+  ],
+  "usage": {
+    "python_example": "from predict_genre import predict_genre; genre, conf, probs = predict_genre(\"lyrics here\")",
+    "requirements": [
+      "numpy",
+      "scikit-learn",
+      "sentence-transformers",
+      "joblib"
+    ],
+    "note": "Load models once at startup for production use"
+  },
+  "deployment": {
+    "ready": true,
+    "speed": "Real-time prediction",
+    "memory": "Moderate (pre-trained models)",
+    "scalability": "High"
+  }
+}
