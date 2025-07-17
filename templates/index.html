@@ -33,28 +33,77 @@
                 <textarea id="lyrics-input" rows="10" class="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-gray-200" placeholder="e.g., Is this the real life? Is this just fantasy?..."></textarea>
             </div>
 
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                 <button id="classify-btn" class="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-12 rounded-lg transition-all shadow-lg flex items-center justify-center">
-                    <span id="btn-text">Classify</span>
+            <div class="mb-6">
+                <div class="text-center">
+                    <p class="text-gray-400 mb-4">Or upload an audio file (MP3, WAV, M4A, OGG, FLAC)</p>
+                    <label for="audio-upload" class="cursor-pointer inline-flex items-center px-6 py-3 border border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all">
+                        <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m0 0V1a1 1 0 011 1v2m0 0v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6m4 0V4"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12m-3 0a3 3 0 106 0 3 3 0 00-6 0"></path>
+                        </svg>
+                        Choose Audio File
+                        <input id="audio-upload" type="file" accept=".mp3,.wav,.m4a,.ogg,.flac" class="hidden">
+                    </label>
+                    <p id="audio-filename" class="text-sm text-gray-400 mt-2 hidden"></p>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button id="classify-btn" class="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-12 rounded-lg transition-all shadow-lg flex items-center justify-center">
+                    <span id="btn-text">Classify Lyrics</span>
                     <svg id="loader" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+                <button id="classify-audio-btn" class="w-full sm:w-auto bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-3 px-12 rounded-lg transition-all shadow-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <span id="audio-btn-text">Classify Audio</span>
+                    <svg id="audio-loader" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                 </button>
             </div>
             
-            <p id="audio-message" class="text-center text-sm text-yellow-400 mt-4 hidden">Audio-to-text is a feature coming soon! For now, please paste lyrics directly.</p>
-
             <div id="results-section" class="mt-10 hidden fade-in">
                 <h2 class="text-2xl font-bold text-center mb-6">Analysis Report</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-gray-700 p-6 rounded-lg">
-                        <h3 class="font-semibold text-lg mb-4 text-purple-300">Genre Prediction</h3>
+                
+                <!-- Model Comparison Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- New Model Results -->
+                    <div class="bg-gray-700 p-6 rounded-lg border-2 border-purple-500">
+                        <h3 class="font-semibold text-lg mb-4 text-purple-300">New Model (Hybrid AI)</h3>
                         <div class="text-center mb-4">
                             <p class="text-gray-400 text-sm">Predicted Genre</p>
-                            <p id="predicted-genre" class="text-4xl font-bold capitalize"></p>
+                            <p id="new-predicted-genre" class="text-3xl font-bold capitalize text-purple-400"></p>
+                            <p id="new-confidence" class="text-sm text-gray-400 mt-1"></p>
+                            <p class="text-xs text-green-400 mt-1">Accuracy: 73.9%</p>
                         </div>
-                        <div id="genre-probabilities"></div>
+                        <div id="new-genre-probabilities" class="space-y-2"></div>
+                    </div>
+
+                    <!-- Legacy Model Results -->
+                    <div class="bg-gray-700 p-6 rounded-lg border-2 border-blue-500">
+                        <h3 class="font-semibold text-lg mb-4 text-blue-300">Legacy Model (Classic)</h3>
+                        <div class="text-center mb-4">
+                            <p class="text-gray-400 text-sm">Predicted Genre</p>
+                            <p id="legacy-predicted-genre" class="text-3xl font-bold capitalize text-blue-400"></p>
+                            <p id="legacy-confidence" class="text-sm text-gray-400 mt-1"></p>
+                            <p class="text-xs text-yellow-400 mt-1">Accuracy: ~65%</p>
+                        </div>
+                        <div id="legacy-genre-probabilities" class="space-y-2"></div>
+                    </div>
+                </div>
+
+                <!-- Content Analysis Section -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-700 p-6 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-4 text-green-300">Sentiment Analysis</h3>
+                        <div class="text-center mb-4">
+                            <p class="text-gray-400 text-sm">Emotional Tone</p>
+                            <p id="sentiment-label" class="text-3xl font-bold"></p>
+                            <p id="sentiment-score" class="text-sm text-gray-400 mt-1"></p>
+                        </div>
                     </div>
 
                     <div class="bg-gray-700 p-6 rounded-lg">
@@ -77,6 +126,13 @@
                         </div>
                     </div>
                 </div>
+                
+                <div id="transcribed-text-section" class="mt-6 bg-gray-700 p-6 rounded-lg hidden">
+                    <h3 class="font-semibold text-lg mb-4 text-blue-300">Transcribed Text</h3>
+                    <div class="bg-gray-800 p-4 rounded-lg">
+                        <p id="transcribed-text" class="text-gray-300 text-sm leading-relaxed"></p>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -88,19 +144,34 @@
     const btnText = document.getElementById('btn-text');
     const loader = document.getElementById('loader');
     const audioUpload = document.getElementById('audio-upload');
-    const audioMessage = document.getElementById('audio-message');
+    const audioFilename = document.getElementById('audio-filename');
+    const classifyAudioBtn = document.getElementById('classify-audio-btn');
+    const audioBtnText = document.getElementById('audio-btn-text');
+    const audioLoader = document.getElementById('audio-loader');
     
     const resultsSection = document.getElementById('results-section');
-    const predictedGenreEl = document.getElementById('predicted-genre');
-    const genreProbabilitiesEl = document.getElementById('genre-probabilities');
-    const sentimentLabelEl = document.getElementById('sentiment-label');
-    const sentimentScoreEl = document.getElementById('sentiment-score');
+    
+    // New Model Elements
+    const newPredictedGenreEl = document.getElementById('new-predicted-genre');
+    const newConfidenceEl = document.getElementById('new-confidence');
+    const newGenreProbabilitiesEl = document.getElementById('new-genre-probabilities');
+    
+    // Legacy Model Elements
+    const legacyPredictedGenreEl = document.getElementById('legacy-predicted-genre');
+    const legacyConfidenceEl = document.getElementById('legacy-confidence');
+    const legacyGenreProbabilitiesEl = document.getElementById('legacy-genre-probabilities');
+    
+    // Content Analysis Elements
+    const sentimentLabelEls = document.querySelectorAll('#sentiment-label');
+    const sentimentScoreEls = document.querySelectorAll('#sentiment-score');
     const explicitnessLabelEl = document.getElementById('explicitness-label');
     const explicitWordCountEl = document.getElementById('explicit-word-count');
+    const transcribedTextSection = document.getElementById('transcribed-text-section');
+    const transcribedTextEl = document.getElementById('transcribed-text');
 
-    // --- API Endpoint ---
-    // This now points to the correct address for the Flask API server.
-    const API_ENDPOINT = 'http://127.0.0.1:5000/predict';
+    // --- API Endpoints ---
+    const API_ENDPOINT = 'http://127.0.0.1:5001/predict';
+    const AUDIO_API_ENDPOINT = 'http://127.0.0.1:5001/predict-audio';
 
     // --- Event Listeners ---
     classifyBtn.addEventListener('click', async () => {
@@ -123,11 +194,36 @@
         }
     });
     
-    audioUpload.addEventListener('change', () => {
-        audioMessage.classList.remove('hidden');
-        setTimeout(() => {
-             audioMessage.classList.add('hidden');
-        }, 5000);
+    classifyAudioBtn.addEventListener('click', async () => {
+        const audioFile = audioUpload.files[0];
+        if (!audioFile) {
+            alert('Please select an audio file to analyze.');
+            return;
+        }
+        
+        toggleAudioLoading(true);
+
+        try {
+            const analysis = await analyzeAudioWithAPI(audioFile);
+            displayResults(analysis, true);
+        } catch (error) {
+            console.error('Error processing audio:', error);
+            alert('Could not process the audio file. Make sure the Flask server is running and the file format is supported.');
+        } finally {
+            toggleAudioLoading(false);
+        }
+    });
+    
+    audioUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            audioFilename.textContent = `Selected: ${file.name}`;
+            audioFilename.classList.remove('hidden');
+            classifyAudioBtn.disabled = false;
+        } else {
+            audioFilename.classList.add('hidden');
+            classifyAudioBtn.disabled = true;
+        }
     });
     
     function toggleLoading(isLoading) {
@@ -136,9 +232,21 @@
             loader.classList.remove('hidden');
             classifyBtn.disabled = true;
         } else {
-            btnText.textContent = 'Classify';
+            btnText.textContent = 'Classify Lyrics';
             loader.classList.add('hidden');
             classifyBtn.disabled = false;
+        }
+    }
+
+    function toggleAudioLoading(isLoading) {
+        if (isLoading) {
+            audioBtnText.textContent = 'Processing Audio...';
+            audioLoader.classList.remove('hidden');
+            classifyAudioBtn.disabled = true;
+        } else {
+            audioBtnText.textContent = 'Classify Audio';
+            audioLoader.classList.add('hidden');
+            classifyAudioBtn.disabled = audioUpload.files.length === 0;
         }
     }
 
@@ -159,36 +267,105 @@
         return response.json();
     }
     
-    function displayResults(analysis) {
-        predictedGenreEl.textContent = analysis.predictedGenre;
+    async function analyzeAudioWithAPI(audioFile) {
+        const formData = new FormData();
+        formData.append('audio', audioFile);
         
-        // Genre Probabilities
-        genreProbabilitiesEl.innerHTML = '';
-        const sortedGenres = Object.entries(analysis.genreProbabilities).sort(([,a],[,b]) => b-a);
-        
-        sortedGenres.forEach(([genre, prob]) => {
-            const percentage = (prob * 100).toFixed(1);
-            const barHtml = `
-                <div class="mb-2">
-                    <div class="flex justify-between mb-1">
-                        <span class="text-sm font-medium text-gray-300 capitalize">${genre}</span>
-                        <span class="text-sm font-medium text-gray-400">${percentage}%</span>
-                    </div>
-                    <div class="w-full bg-gray-600 rounded-full h-2.5">
-                        <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2.5 rounded-full" style="width: ${percentage}%"></div>
-                    </div>
-                </div>
-            `;
-            genreProbabilitiesEl.innerHTML += barHtml;
+        const response = await fetch(AUDIO_API_ENDPOINT, {
+            method: 'POST',
+            body: formData
         });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Audio processing failed with status ${response.status}`);
+        }
+        
+        return response.json();
+    }
+    
+    function displayResults(analysis, isAudioAnalysis = false) {
+        // Show transcribed text if this is from audio analysis
+        if (isAudioAnalysis && analysis.transcribedText) {
+            transcribedTextEl.textContent = analysis.transcribedText;
+            transcribedTextSection.classList.remove('hidden');
+        } else {
+            transcribedTextSection.classList.add('hidden');
+        }
+        
+        // Display New Model Results
+        if (analysis.models && analysis.models.new_model) {
+            const newModel = analysis.models.new_model;
+            newPredictedGenreEl.textContent = newModel.predicted_genre;
+            newConfidenceEl.textContent = `Confidence: ${(newModel.confidence * 100).toFixed(1)}%`;
+            
+            // New Model Genre Probabilities
+            newGenreProbabilitiesEl.innerHTML = '';
+            const sortedNewGenres = Object.entries(newModel.genre_probabilities).sort(([,a],[,b]) => b-a);
+            
+            sortedNewGenres.forEach(([genre, prob]) => {
+                const percentage = (prob * 100).toFixed(1);
+                const barHtml = `
+                    <div class="mb-2">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-300 capitalize">${genre}</span>
+                            <span class="text-sm font-medium text-gray-400">${percentage}%</span>
+                        </div>
+                        <div class="w-full bg-gray-600 rounded-full h-2.5">
+                            <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2.5 rounded-full" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+                newGenreProbabilitiesEl.innerHTML += barHtml;
+            });
+        } else {
+            newPredictedGenreEl.textContent = 'Model not available';
+            newConfidenceEl.textContent = '';
+            newGenreProbabilitiesEl.innerHTML = '<p class="text-gray-500 text-sm">Model not loaded</p>';
+        }
+        
+        // Display Legacy Model Results
+        if (analysis.models && analysis.models.legacy_model) {
+            const legacyModel = analysis.models.legacy_model;
+            legacyPredictedGenreEl.textContent = legacyModel.predicted_genre;
+            legacyConfidenceEl.textContent = `Confidence: ${(legacyModel.confidence * 100).toFixed(1)}%`;
+            
+            // Legacy Model Genre Probabilities
+            legacyGenreProbabilitiesEl.innerHTML = '';
+            const sortedLegacyGenres = Object.entries(legacyModel.genre_probabilities).sort(([,a],[,b]) => b-a);
+            
+            sortedLegacyGenres.forEach(([genre, prob]) => {
+                const percentage = (prob * 100).toFixed(1);
+                const barHtml = `
+                    <div class="mb-2">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-300 capitalize">${genre}</span>
+                            <span class="text-sm font-medium text-gray-400">${percentage}%</span>
+                        </div>
+                        <div class="w-full bg-gray-600 rounded-full h-2.5">
+                            <div class="bg-gradient-to-r from-blue-500 to-cyan-500 h-2.5 rounded-full" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+                legacyGenreProbabilitiesEl.innerHTML += barHtml;
+            });
+        } else {
+            legacyPredictedGenreEl.textContent = 'Model not available';
+            legacyConfidenceEl.textContent = '';
+            legacyGenreProbabilitiesEl.innerHTML = '<p class="text-gray-500 text-sm">Model not loaded</p>';
+        }
 
         // Content Analysis
-        sentimentLabelEl.textContent = analysis.sentimentLabel;
-        sentimentScoreEl.textContent = `(Compound: ${analysis.sentimentScore.toFixed(3)})`;
+        sentimentLabelEls.forEach(el => {
+            el.textContent = analysis.sentimentLabel;
+            if(analysis.sentimentLabel === 'Positive') el.className = "text-xl font-bold text-green-400";
+            else if(analysis.sentimentLabel === 'Negative') el.className = "text-xl font-bold text-red-400";
+            else el.className = "text-xl font-bold text-gray-300";
+        });
         
-        if(analysis.sentimentLabel === 'Positive') sentimentLabelEl.className = "text-xl font-bold text-green-400";
-        else if(analysis.sentimentLabel === 'Negative') sentimentLabelEl.className = "text-xl font-bold text-red-400";
-        else sentimentLabelEl.className = "text-xl font-bold text-gray-300";
+        sentimentScoreEls.forEach(el => {
+            el.textContent = `(Compound: ${analysis.sentimentScore.toFixed(3)})`;
+        });
 
         explicitnessLabelEl.textContent = analysis.explicitnessLabel;
         explicitWordCountEl.textContent = `(${analysis.explicitWordCount} explicit words found)`;

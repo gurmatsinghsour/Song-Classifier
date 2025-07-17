@@ -17,6 +17,12 @@ class GenreClassifier:
         self.classifier = None
         self.label_encoder = None
         self.is_loaded = False
+        self.model_info = {
+            'name': 'Hybrid Ensemble Model',
+            'type': 'Sentence Transformers + TF-IDF + Ensemble',
+            'accuracy': '73.9%',
+            'features': '684-dimensional (384 embeddings + 300 TF-IDF)'
+        }
     
     def load_models(self):
         """
@@ -76,5 +82,6 @@ class GenreClassifier:
         return {
             'predicted_genre': predicted_genre,
             'confidence': float(confidence),
-            'genre_probabilities': genre_probabilities
+            'genre_probabilities': genre_probabilities,
+            'model_info': self.model_info
         }

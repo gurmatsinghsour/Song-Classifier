@@ -7,3 +7,6 @@ nltk
 sentence-transformers
 torch
 numpy
+speech-recognition
+pydub
+vaderSentiment
