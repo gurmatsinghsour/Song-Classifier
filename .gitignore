@@ -30,4 +30,4 @@ instance/
 *.sqlite3
 
 # Environment variables and secrets
-.env
+.envmodels/final/*.joblib
