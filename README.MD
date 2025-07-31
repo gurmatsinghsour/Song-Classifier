@@ -17,9 +17,6 @@ A modern AI-powered web application for classifying song genres from lyrics usin
 - **Base Model**: DistilBERT (all-MiniLM-L6-v2) for semantic understanding
 - **Features**: 684-dimensional feature space (384 embeddings + 300 TF-IDF)ric Genre & Content Classifier
 
-Welcome to our **Lyric Genre & Content Classifier** project!  
-This tool uses Natural Language Processing (NLP) and machine learning to predict a song’s **genre** and **emotional tone** based on its lyrics.
-
 ---
 
 ## How to Run the Project
